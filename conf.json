@@ -1,0 +1,8 @@
+{
+    "boot": "",
+    "boot_blk": "/dev/sda",
+    "root_blk": "/dev/sda",
+    "root_sz": "",
+    "home_blk": "",
+    "home_sz": ""
+}

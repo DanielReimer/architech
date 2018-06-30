@@ -1,6 +1,6 @@
 #!/usr/bin/python3.6
 
-import sys, os, argparse
+import sys, os, json
 import urllib.request, urllib.error
 
 class bcolors:
@@ -18,21 +18,13 @@ OK=bcolors.OKGREEN+"[OK]: "+bcolors.ENDC
 WARNING=bcolors.WARNING+"[WARNING]: "+bcolors.ENDC
 INFO=bcolors.OKBLUE+"[INFO]: "+bcolors.ENDC
 
+with open('conf.json') as json_data:
+    args = json.load(json_data)
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Daniel\'s install script for Arch Linux')
-
-    # arguments
-    parser.add_argument("-u", "--uefi", help="Install systemd-boot with uefi support",
-                        action="store_true")
-    parser.add_argument("-l", "--legacy", help="Install grub2 with legacy bios support",
-                        action="store_true")
-    parser.add_argument("-r", "--root", help="Size of root partition (in GB) and /dev/$BLOCK",
-                        type=str, nargs=2, required=True)
-    parser.add_argument("-ho", "--home", help="Size of home partition (in GB) and /dev/$BLOCK",
-                        type=str, nargs=2)
-
-
-    args = parser.parse_args()
+    if "garbage" in args:
+        print("hi")
 
     # check internet connection
     if check_connectivity():
@@ -41,35 +33,72 @@ def main():
         print(ERROR+"No internet connection was found")
         sys.exit(1)
 
-    if args.uefi:
-        partition_uefi(args.root, args.home)
-    elif args.legacy:
-        partition_legacy(args.root, args.home)
-    else:
-        if os.path.isdir("/sys/firmware/efi/efivars"):
-            partition_uefi(args.root, args.home)
-        else:
-            partition_legacy(args.root, args.home)
-
     if os.system("timedatectl set-ntp true") != 0:
         print(WARNING+"Was unable to ensure system clock was accurate")
+
+    # partition and format drives
+    if args["boot"] == "uefi":
+        partition_uefi()
+    elif args["boot"] == "legacy":
+        partition_legacy()
+    else:
+        if os.path.isdir("/sys/firmware/efi/efivars"):
+            partition_uefi()
+        else:
+            partition_legacy()
+
+    partition_root()
+    partition_home()
+
 
     sys.exit(0)
 
 
 def check_connectivity():
     try:
-        urllib.request.urlopen("https://www.google.com", timeout=2)
+        urllib.request.urlopen("https://www.google.com", timeout=3)
         return True
     except urllib.request.URLError:
         return False
 
-def partition_uefi(root, home):
+def partition_uefi():
     print(INFO+"Using UEFI boot")
 
+    if os.system("echo -e \"g\nn\n1\n\n+512M\nt\n1\nw\" | fdisk "+args["boot_blk"]) != 0:
+        print(ERROR+"Was unable to make uefi boot partition")
+        sys.exit(1)
 
-def partition_legacy(root, home):
+    if os.system("mkfs.fat -F32 "+args["boot_blk"]) != 0:
+        print(ERROR+"Was unable to format boot partition")
+        sys.exit(1)
+
+def partition_legacy():
     print(INFO+"Using legacy boot")
+    if os.system("echo -e \"o\nn\np\n1\n\n+512M\na\nw\" | fdisk "+args["boot_blk"]) != 0:
+        print(ERROR+"Was unable to make legacy boot partition")
+        sys.exit(1)
+
+    if os.system("mkfs.ext2 "+args["boot_blk"]) != 0:
+        print(ERROR+"Was unable to format boot partition")
+        sys.exit(1)
+
+def partition_root():
+    # format size fdisk entry
+    size = ""
+    if args["root_sz"] != "":
+        size = "+"+args["root_sz"]+"M"
+
+    if args["boot"] == "uefi":
+        if os.system("echo -e \"n\n\" | fdisk "+args["root_blk"]):
+            print(ERROR+"Was unable to make a root partition")
+            sys.exit(1)
+    else:
+        if os.system("echo -e \"n\np\n\" | fdisk "+args["root_blk"]):
+            print(ERROR+"Was unable to make a root partition")
+            sys.exit(1)
+
+def partition_home():
+    print("hi")
 
 if __name__ == "__main__":
     main()
