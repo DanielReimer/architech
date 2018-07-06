@@ -89,7 +89,7 @@ def partition_uefi():
         print(ERROR+"Was unable to make uefi boot partition")
         sys.exit(1)
 
-    if os.system("mkfs.fat -F32 "+args["boot_blk"]) != 0:
+    if os.system("mkfs.fat -F32 "+args["boot_blk"]+"1") != 0:
         print(ERROR+"Was unable to format boot partition")
         sys.exit(1)
 
@@ -99,7 +99,7 @@ def partition_legacy():
         print(ERROR+"Was unable to make legacy boot partition")
         sys.exit(1)
 
-    if os.system("mkfs.ext2 "+args["boot_blk"]) != 0:
+    if os.system("mkfs.ext2 -F "+args["boot_blk"]+"1") != 0:
         print(ERROR+"Was unable to format boot partition")
         sys.exit(1)
 
@@ -119,7 +119,7 @@ def partition_root():
             print(ERROR+"Was unable to make a root partition")
             sys.exit(1)
 
-    if os.system("mkfs.ext4 "+args["root_blk"]) != 0:
+    if os.system("mkfs.ext4 -F "+args["root_blk"]+"2") != 0:
         print(ERROR+"Was unable to format root partition")
         sys.exit(1)
 
