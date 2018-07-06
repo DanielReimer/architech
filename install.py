@@ -57,7 +57,11 @@ def main():
 
     print(INFO+"Generating fstab")
     os.system("genfstab -U /mnt >> /mnt/etc/fstab")
+
+    # change root
+    print(INFO+"Changing root")
     os.system("arch-chroot /mnt")
+    os.chroot("/mnt")
 
     print(INFO+"Setting locale information")
     os.system("ln -sf /usr/share/zoneinfo/"+args["country"]+"/"+args["country"]+" /etc/localtime")
