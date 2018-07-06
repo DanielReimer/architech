@@ -24,15 +24,8 @@ with open('conf.json') as json_data:
 
 
 def main():
-    #if "garbage" in args:
-    #    print("hi")
-
     # check internet connection
-    if check_connectivity():
-        print(INFO+"Internet connection was found")
-    else:
-        print(ERROR+"No internet connection was found")
-        sys.exit(1)
+    check_connectivity()
 
     if os.system("timedatectl set-ntp true") != 0:
         print(WARNING+"Was unable to ensure system clock was accurate")
@@ -51,12 +44,16 @@ def main():
     partition_root()
     #partition_home()
 
+    print(INFO+"Mounting partitions")
     os.system("mount "+args["root_blk"]+" /mnt")
+    os.system("mkdir /mnt/boot")
     os.system("mount "+args["boot_blk"]+" /mnt/boot")
 
     # install packages
+    print(INFO+"Installing packages with pacstrap")
     os.system("pacstrap /mnt "+args["pkgs"])
 
+    print(INFO+"Generating fstab")
     os.system("genfstab -U /mnt >> /mnt/etc/fstab")
     os.system("arch-chroot /mnt")
     os.system("ln -sf /usr/share/zoneinfo/"+args["country"]+"/"+args["country"]+" /etc/localtime")
@@ -78,9 +75,10 @@ def main():
 def check_connectivity():
     try:
         urllib.request.urlopen("https://www.google.com", timeout=3)
-        return True
+        print(INFO+"Internet connection was found")
     except urllib.request.URLError:
-        return False
+        print(ERROR+"No internet connection was found")
+        sys.exit(1)
 
 def partition_uefi():
     print(INFO+"Using UEFI boot")
