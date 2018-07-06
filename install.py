@@ -60,21 +60,19 @@ def main():
 
     # change root
     print(INFO+"Changing root")
-    os.system("arch-chroot /mnt")
-    os.chroot("/mnt")
 
     print(INFO+"Setting locale information")
-    os.system("ln -sf /usr/share/zoneinfo/"+args["country"]+"/"+args["country"]+" /etc/localtime")
-    os.system("hwclock --systohc")
-    os.system("echo \"en_US.UTF-8 UTF-8\" >> /etc/locale.gen")
-    os.system("locale.gen")
-    os.system("echo \"LANG=en_US.UTF-8\" > /etc/locale.conf")
+    os.system("ln -sf /mnt/usr/share/zoneinfo/"+args["country"]+"/"+args["country"]+" /mnt/etc/localtime")
+    os.system("arch-chroot /mnt hwclock --systohc")
+    os.system("echo \"en_US.UTF-8 UTF-8\" >> /mnt/etc/locale.gen")
+    os.system("arch-chroot /mnt locale.gen")
+    os.system("echo \"LANG=en_US.UTF-8\" > /mnt/etc/locale.conf")
 
     set_hostname()
 
-    os.system("mkinitcpio -p linux")
+    os.system("arch-chroot /mnt mkinitcpio -p linux")
 
-    os.system("passwd")
+    os.system("arch-chroot /mnt passwd")
     os.system("reboot")
 
     sys.exit(0)
@@ -134,11 +132,11 @@ def partition_home():
     return 0
 
 def set_hostname():
-    os.system("echo \""+args["hostname"]+"\" > /etc/hostname")
+    os.system("echo \""+args["hostname"]+"\" > /mnt/etc/hostname")
     hosts = """127.0.0.1	localhost
 ::1		localhost
 127.0.1.1"""+args["hostname"]+".localdomain   "+args["hostname"]
-    os.system("echo \""+hosts+"\" >> /etc/hosts")
+    os.system("echo \""+hosts+"\" >> /mnt/etc/hosts")
 
 if __name__ == "__main__":
     main()
