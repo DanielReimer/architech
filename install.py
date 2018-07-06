@@ -64,7 +64,7 @@ def main():
     print(INFO+"Setting locale information")
     os.system("ln -sf /mnt/usr/share/zoneinfo/"+args["country"]+"/"+args["country"]+" /mnt/etc/localtime")
     os.system("arch-chroot /mnt hwclock --systohc")
-    os.system("echo \"en_US.UTF-8 UTF-8\" >> /mnt/etc/locale.gen")
+    os.system("echo \"en_US.UTF-8 UTF-8\" >> /mnt/etc/locale-gen")
     os.system("arch-chroot /mnt locale.gen")
     os.system("echo \"LANG=en_US.UTF-8\" > /mnt/etc/locale.conf")
 
