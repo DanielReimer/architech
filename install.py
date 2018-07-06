@@ -58,11 +58,13 @@ def main():
     print(INFO+"Generating fstab")
     os.system("genfstab -U /mnt >> /mnt/etc/fstab")
     os.system("arch-chroot /mnt")
+
+    print(INFO+"Setting locale information")
     os.system("ln -sf /usr/share/zoneinfo/"+args["country"]+"/"+args["country"]+" /etc/localtime")
     os.system("hwclock --systohc")
-    os.system("cat \"en_US.UTF-8 UTF-8\" >> /etc/locale.gen")
+    os.system("echo \"en_US.UTF-8 UTF-8\" >> /etc/locale.gen")
     os.system("locale.gen")
-    os.system("cat \"LANG=en_US.UTF-8\" > /etc/locale.conf")
+    os.system("echo \"LANG=en_US.UTF-8\" > /etc/locale.conf")
 
     set_hostname()
 
@@ -128,11 +130,11 @@ def partition_home():
     return 0
 
 def set_hostname():
-    os.system("cat \""+args["hostname"]+"\" > /etc/hostname")
+    os.system("echo \""+args["hostname"]+"\" > /etc/hostname")
     hosts = """127.0.0.1	localhost
 ::1		localhost
 127.0.1.1"""+args["hostname"]+".localdomain   "+args["hostname"]
-    os.system("cat \""+hosts+"\" >> /etc/hosts")
+    os.system("echo \""+hosts+"\" >> /etc/hosts")
 
 if __name__ == "__main__":
     main()
