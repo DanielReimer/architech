@@ -1,8 +1,12 @@
 {
+    "hostname": "my_test_vm1",
     "boot": "",
-    "boot_blk": "/dev/sda",
-    "root_blk": "/dev/sda",
+    "boot_blk": "/dev/vda",
+    "root_blk": "/dev/vda",
     "root_sz": "",
     "home_blk": "",
-    "home_sz": ""
+    "home_sz": "",
+    "pkgs": "base base-devel",
+    "country": "America",
+    "city": "Los_Angeles"
 }

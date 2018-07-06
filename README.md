@@ -1,1 +1,1 @@
-# EZ-Arch
+# Architech
