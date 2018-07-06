@@ -37,17 +37,19 @@ def main():
         partition_legacy()
     else:
         if os.path.isdir("/sys/firmware/efi/efivars"):
+            args["boot"] = "uefi"
             partition_uefi()
         else:
+            args["boot"] = "legacy"
             partition_legacy()
 
     partition_root()
     #partition_home()
 
     print(INFO+"Mounting partitions")
-    os.system("mount "+args["root_blk"]+" /mnt")
+    os.system("mount "+args["root_blk"]+"2 /mnt")
     os.system("mkdir /mnt/boot")
-    os.system("mount "+args["boot_blk"]+" /mnt/boot")
+    os.system("mount "+args["boot_blk"]+"1 /mnt/boot")
 
     # install packages
     print(INFO+"Installing packages with pacstrap")
