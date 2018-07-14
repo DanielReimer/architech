@@ -22,8 +22,12 @@ INFO=bcolors.OKBLUE+"[INFO]: "+bcolors.ENDC
 with open('conf.json') as json_data:
     args = json.load(json_data)
 
+def validate_args():
+    return 0
 
 def main():
+    validate_args()
+
     # check internet connection
     check_connectivity()
 
@@ -135,7 +139,7 @@ def set_hostname():
     os.system("echo \""+args["hostname"]+"\" > /mnt/etc/hostname")
     hosts = """127.0.0.1	localhost
 ::1		localhost
-127.0.1.1"""+args["hostname"]+".localdomain   "+args["hostname"]
+127.0.1.1 """+args["hostname"]+".localdomain   "+args["hostname"]
     os.system("echo \""+hosts+"\" >> /mnt/etc/hosts")
 
 if __name__ == "__main__":
