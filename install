@@ -74,10 +74,15 @@ def main():
     os.system("arch-chroot /mnt locale.gen")
     os.system("echo \"LANG=en_US.UTF-8\" > /mnt/etc/locale.conf")
 
+    print(INFO+"Setting hostname")
     set_hostname()
 
     os.system("arch-chroot /mnt mkinitcpio -p linux")
 
+    print(INFO+"Installing bootloader")
+    install_bootloader()
+
+    print(INFO+"Set root password")
     os.system("arch-chroot /mnt passwd")
     os.system("reboot")
 
@@ -133,7 +138,6 @@ def partition_root():
         print(ERROR+"Was unable to format root partition")
         sys.exit(1)
 
-
 def partition_home():
     return 0
 
@@ -143,6 +147,11 @@ def set_hostname():
 ::1		localhost
 127.0.1.1 """+args["hostname"]+".localdomain   "+args["hostname"]
     os.system("echo \""+hosts+"\" >> /mnt/etc/hosts")
+
+def install_bootloader():
+    os.system("arch-chroot /mnt pacman -Sy grub")
+    os.system("grub-install --target=i386-pc "+args["boot_blk"]+"1")
+    return 0
 
 if __name__ == "__main__":
     main()
