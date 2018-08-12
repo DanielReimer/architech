@@ -149,8 +149,8 @@ def set_hostname():
     os.system("echo \""+hosts+"\" >> /mnt/etc/hosts")
 
 def install_bootloader():
-    os.system("arch-chroot /mnt pacman -Sy grub")
-    os.system("grub-install --target=i386-pc "+args["boot_blk"]+"1")
+    os.system("arch-chroot /mnt pacman --noconfirm -Sy grub")
+    os.system("arch-chroot /mnt grub-install --target=i386-pc "+args["boot_blk"])
     return 0
 
 if __name__ == "__main__":
