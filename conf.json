@@ -6,7 +6,9 @@
     "root_sz": "",
     "home_blk": "",
     "home_sz": "",
-    "pkgs": "base base-devel",
+    "pkgs": "base sudo base-devel",
     "country": "America",
-    "city": "Los_Angeles"
+    "city": "Los_Angeles",
+    "username": "my_user",
+    "group": "wheel"
 }

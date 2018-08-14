@@ -84,6 +84,13 @@ def main():
 
     print(INFO+"Set root password")
     os.system("arch-chroot /mnt passwd")
+
+    os.system("arch-chroot /mnt useradd --create-home "+args["username"])
+    os.system("echo \"%wheel ALL=(ALL) ALL\" >> /mnt/etc/sudoers")
+    print(INFO+"Set password for: "+args["username"])
+    os.system("arch-chroot /mnt passwd "+args["username"])
+
+    print(INFO+"Rebooting...")
     os.system("reboot")
 
     sys.exit(0)
