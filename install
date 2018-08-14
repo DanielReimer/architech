@@ -87,6 +87,7 @@ def main():
 
     os.system("arch-chroot /mnt useradd --create-home "+args["username"])
     os.system("echo \"%wheel ALL=(ALL) ALL\" >> /mnt/etc/sudoers")
+    os.system("arch-chroot gpasswd -a "+args["username"]+" "+args["group"])
     print(INFO+"Set password for: "+args["username"])
     os.system("arch-chroot /mnt passwd "+args["username"])
 
