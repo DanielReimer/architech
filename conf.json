@@ -10,5 +10,6 @@
     "country": "America",
     "city": "Los_Angeles",
     "username": "my_user",
-    "group": "wheel"
+    "group": "wheel",
+    "desktop_environment": "i3"
 }

@@ -82,12 +82,17 @@ def main():
     print(INFO+"Installing bootloader")
     install_bootloader()
 
+    print(INFO+"Configuring users")
+    os.system("arch-chroot /mnt useradd --create-home "+args["username"])
+    os.system("echo \"%wheel ALL=(ALL) ALL\" >> /mnt/etc/sudoers")
+    os.system("arch-chroot /mnt gpasswd -a "+args["username"]+" "+args["group"])
+
+    print(INFO+"Installing the desktop environment")
+    install_desktop_environment()
+
     print(INFO+"Set root password")
     os.system("arch-chroot /mnt passwd")
 
-    os.system("arch-chroot /mnt useradd --create-home "+args["username"])
-    os.system("echo \"%wheel ALL=(ALL) ALL\" >> /mnt/etc/sudoers")
-    os.system("arch-chroot gpasswd -a "+args["username"]+" "+args["group"])
     print(INFO+"Set password for: "+args["username"])
     os.system("arch-chroot /mnt passwd "+args["username"])
 
@@ -165,6 +170,16 @@ def install_bootloader():
         os.system("arch-chroot /mnt grub-install --target=i386-pc "+args["boot_blk"])
     os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
 
+def install_desktop_environment():
+    os.system("arch-chroot /mnt pacman --noconfirm -Sy archlinux-keyring")
+    os.system("arch-chroot /mnt pacman --noconfirm -Sy xorg-server xorg-xinit i3")
+    os.system("cp /mnt/etc/X11/xinit/xinitrc /mnt/home/"+args["username"]+"/.xinitrc")
+    os.system("head -n -5 /mnt/home/"+args["username"]+"/.xinitrc")
+    os.system("echo \"exec i3\" >> /mnt/home/"+args["username"]+"/.xinitrc")
+    autostart = """if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
+  exec startx
+fi"""
+    os.system("echo \""+autostart+"\" >> /mnt/home/"+args["username"]+"/.bash_profile")
 
 if __name__ == "__main__":
     main()
