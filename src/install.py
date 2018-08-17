@@ -87,8 +87,8 @@ def main():
     os.system("echo \"%wheel ALL=(ALL) ALL\" >> /mnt/etc/sudoers")
     os.system("arch-chroot /mnt gpasswd -a "+args["username"]+" "+args["group"])
 
-    print(INFO+"Installing the desktop environment")
-    install_desktop_environment()
+    #print(INFO+"Installing the desktop environment")
+    #install_desktop_environment()
 
     print(INFO+"Set root password")
     os.system("arch-chroot /mnt passwd")
