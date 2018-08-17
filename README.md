@@ -8,7 +8,7 @@ An Arch Linux installer. The main goal for this project is to be able to install
 
 ## Usuage
 
-After booting into the Arch Linux liveCD, download the files
+After booting into the Arch Linux liveCD, download the files with:
 
 `root@archiso ~ # curl architech.sh | bash && cd architech`
 
@@ -29,7 +29,7 @@ Open the file `conf.json` file with your favorite text editor and make configura
 * group		      - Groups for the user to be in (wheel is sudo group by default)
 * desktop_environment - Only option right now is `i3`
 
-When completed, run `./architech.sh` to start the installation process
+When completed, run `./architech.sh -i` to start the installation process
 
 ## Contributing
 
